@@ -162,6 +162,8 @@ var EDIT_LIST = exports.EDIT_LIST = 'EDIT_LIST';
 var ADD_CARD = exports.ADD_CARD = 'ADD_CARD';
 var EDIT_CARD = exports.EDIT_CARD = 'EDIT_CARD';
 var MOVE_CARD = exports.MOVE_CARD = 'MOVE_CARD';
+var DELETE_CARD = exports.DELETE_CARD = 'DELETE_CARD';
+var TOGGLE_LABEL = exports.TOGGLE_LABEL = 'TOGGLE_LABEL';
 
 /***/ }),
 
@@ -178,7 +180,7 @@ var MOVE_CARD = exports.MOVE_CARD = 'MOVE_CARD';
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.moveCard = exports.editCard = exports.addCard = exports.editList = exports.addList = undefined;
+exports.toggleLabel = exports.deleteCard = exports.moveCard = exports.editCard = exports.addCard = exports.editList = exports.addList = undefined;
 
 var _actionTypes = __webpack_require__(/*! ./actionTypes */ "./src/actions/actionTypes.js");
 
@@ -240,6 +242,27 @@ var moveCard = exports.moveCard = function moveCard(dragIndex, dragListId, hover
     };
 };
 
+var deleteCard = exports.deleteCard = function deleteCard(listId, cardIndex) {
+    return {
+        type: ActionTypes.DELETE_CARD,
+        payload: {
+            listId: listId,
+            cardIndex: cardIndex
+        }
+    };
+};
+
+var toggleLabel = exports.toggleLabel = function toggleLabel(listId, cardId, label) {
+    return {
+        type: ActionTypes.TOGGLE_LABEL,
+        payload: {
+            listId: listId,
+            cardId: cardId,
+            label: label
+        }
+    };
+};
+
 /***/ }),
 
 /***/ "./src/components/card/card.jsx":
@@ -293,7 +316,6 @@ var cardSource = {
             listLength: props.listLength
         };
     },
-
     canDrag: function canDrag(props, monitor) {
         return !!props.card.message;
     },
@@ -412,21 +434,72 @@ var Card = (_dec = (0, _reactDnd.DropTarget)(_itemTypes2.default.CARD, cardTarge
 
             var _props = this.props,
                 card = _props.card,
+                listId = _props.listId,
+                menuCard = _props.menuCard,
+                index = _props.index,
                 isDragging = _props.isDragging,
                 connectDragSource = _props.connectDragSource,
                 connectDropTarget = _props.connectDropTarget;
 
+            var isMenuCard = menuCard === card.id; // Is this card the current menu card
 
             return connectDragSource(connectDropTarget(_react2.default.createElement(
                 'div',
-                { className: 'card note-card mb-3 ' + (isDragging ? 'dragging' : '') },
+                { className: 'card note-card mb-3 ' + (isDragging ? 'dragging' : '') + ' ' + (isMenuCard ? 'card-menu' : '') },
                 _react2.default.createElement(
                     'div',
                     { className: 'card-header' },
                     _react2.default.createElement(
+                        'div',
+                        { className: 'container' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'row justify-content-left pt-0 ' + (isMenuCard ? 'menu-active' : '') },
+                            (card.labels.one || isMenuCard) && _react2.default.createElement(
+                                'div',
+                                { className: 'col-4 hide-overflow text-center' },
+                                _react2.default.createElement(
+                                    'span',
+                                    { className: 'badge align-middle badge-pill label ' + (card.labels.one ? 'active' : '') + ' one', onClick: function onClick() {
+                                            if (isMenuCard) {
+                                                _this2.props.toggleLabel(listId, card.id, 'one');
+                                            }
+                                        } },
+                                    ' '
+                                )
+                            ),
+                            (card.labels.two || isMenuCard) && _react2.default.createElement(
+                                'div',
+                                { className: 'col-4 hide-overflow text-center' },
+                                _react2.default.createElement(
+                                    'span',
+                                    { className: 'badge align-middle badge-pill label ' + (card.labels.two ? 'active' : '') + ' two', onClick: function onClick() {
+                                            if (isMenuCard) {
+                                                _this2.props.toggleLabel(listId, card.id, 'two');
+                                            }
+                                        } },
+                                    ' '
+                                )
+                            ),
+                            (card.labels.three || isMenuCard) && _react2.default.createElement(
+                                'div',
+                                { className: 'col-4 hide-overflow text-center' },
+                                _react2.default.createElement(
+                                    'span',
+                                    { className: 'badge align-middle badge-pill label ' + (card.labels.three ? 'active' : '') + ' three', onClick: function onClick() {
+                                            if (isMenuCard) {
+                                                _this2.props.toggleLabel(listId, card.id, 'three');
+                                            }
+                                        } },
+                                    ' '
+                                )
+                            )
+                        )
+                    ),
+                    _react2.default.createElement(
                         'form',
                         { className: 'input-group', onSubmit: this.handleSubmit },
-                        _react2.default.createElement('input', { type: 'text', className: 'form-control card-message',
+                        _react2.default.createElement('input', { type: 'text', className: 'form-control pl-3 card-message',
                             placeholder: 'Add a card',
                             onChange: this.handleChange,
                             value: this.state.message,
@@ -439,20 +512,61 @@ var Card = (_dec = (0, _reactDnd.DropTarget)(_itemTypes2.default.CARD, cardTarge
                             } }),
                         _react2.default.createElement(
                             'div',
-                            { className: 'input-group-append pl-2 pt-1' },
+                            { className: 'input-group-append pl-2 pr-1 pt-1' },
                             _react2.default.createElement(
                                 'span',
                                 null,
                                 _react2.default.createElement(
                                     'div',
-                                    { className: 'btn btn-sm btn-light card-menu' },
-                                    card.message && _react2.default.createElement(_md.MdMoreHoriz, { className: 'mb-1' }) || _react2.default.createElement(_md.MdAdd, { className: 'mb-1', onClick: function onClick(event) {
-                                            if (_this2.state.message) {
-                                                _this2.handleSubmit(event);
+                                    { className: 'btn btn-sm btn-light card-menu ' + (isMenuCard ? 'disabled' : ''), onClick: function onClick(event) {
+                                            if (card.message) {
+                                                _this2.props.onMenuClick(listId, card.id);
+                                                _this2.setState({ menu: true });
                                             } else {
-                                                document.getElementById('input_' + card.id).focus();
+                                                if (_this2.state.message) {
+                                                    _this2.handleSubmit(event);
+                                                } else {
+                                                    document.getElementById('input_' + card.id).focus();
+                                                }
                                             }
-                                        } })
+                                        } },
+                                    card.message && _react2.default.createElement(_md.MdMoreHoriz, { className: 'mb-1' }) || _react2.default.createElement(_md.MdAdd, { className: 'mb-1' })
+                                )
+                            )
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: isMenuCard ? 'show-menu container' : 'collapse-menu' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: isMenuCard ? '' : 'd-none' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'row justify-content-center mt-1' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'col-5' },
+                                    _react2.default.createElement(
+                                        'span',
+                                        { className: 'btn btn-sm btn-light menu-button', onClick: function onClick() {
+                                                _this2.setState({ submitted: false }, function () {
+                                                    return document.getElementById('input_' + card.id).focus();
+                                                });
+                                            } },
+                                        'Edit'
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'col-5' },
+                                    _react2.default.createElement(
+                                        'span',
+                                        { className: 'btn btn-sm btn-light menu-button', onClick: function onClick() {
+                                                _this2.props.deleteCard(listId, index);
+                                            } },
+                                        'Delete'
+                                    )
                                 )
                             )
                         )
@@ -666,7 +780,16 @@ var List = (_dec = (0, _reactDnd.DragDropContext)(_reactDndHtml5Backend2.default
                     'div',
                     { className: 'card-body' },
                     (0, _lodash.map)(list.cards, function (card, index) {
-                        return _react2.default.createElement(_card2.default, { key: card.id, listId: list.id, card: card, index: index, editCard: _this2.props.editCard, moveCard: _this2.props.moveCard });
+                        return _react2.default.createElement(_card2.default, { key: card.id,
+                            listId: list.id,
+                            card: card,
+                            index: index,
+                            editCard: _this2.props.editCard,
+                            moveCard: _this2.props.moveCard,
+                            deleteCard: _this2.props.deleteCard,
+                            onMenuClick: _this2.props.onMenuClick,
+                            menuCard: _this2.props.menuCard,
+                            toggleLabel: _this2.props.toggleLabel });
                     })
                 )
             );
@@ -791,10 +914,18 @@ var Board = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).call(this, props));
 
+        _this.state = {
+            overlay: false,
+            menuList: null,
+            menuCard: null
+        };
+
         _this.submitList = _this.submitList.bind(_this);
         _this.submitCard = _this.submitCard.bind(_this);
         _this.addTrailingList = _this.addTrailingList.bind(_this);
         _this.addTrailingCard = _this.addTrailingCard.bind(_this);
+        _this.onMenuClick = _this.onMenuClick.bind(_this);
+        _this.deleteCard = _this.deleteCard.bind(_this);
         return _this;
     }
 
@@ -897,6 +1028,30 @@ var Board = function (_React$Component) {
             return addTrailingCard;
         }()
     }, {
+        key: 'onMenuClick',
+        value: function onMenuClick() {
+            var listId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+            var cardId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+            this.setState({
+                overlay: true,
+                menuList: listId, // Pass these to the lists and cards
+                menuCard: cardId // so that they will know if they're the menu list/card
+            });
+        }
+    }, {
+        key: 'deleteCard',
+        value: function deleteCard(listId, cardIndex) {
+            // First reset the overlay to default
+            this.setState({
+                overlay: false,
+                menuList: null,
+                menuCard: null
+            });
+
+            this.props.deleteCard(listId, cardIndex);
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
@@ -929,7 +1084,16 @@ var Board = function (_React$Component) {
                                             editCard: function editCard(message, id) {
                                                 return _this2.submitCard(message, id, list);
                                             },
-                                            moveCard: _this2.props.moveCard });
+                                            moveCard: _this2.props.moveCard,
+                                            deleteCard: function deleteCard(listId, cardIndex) {
+                                                return _this2.deleteCard(listId, cardIndex);
+                                            },
+                                            onMenuClick: _this2.onMenuClick,
+                                            menuList: _this2.state.menuList,
+                                            menuCard: _this2.state.menuCard,
+                                            toggleLabel: function toggleLabel(listId, cardId, label) {
+                                                return _this2.props.toggleLabel(listId, cardId, label);
+                                            } });
                                     })
                                 );
                             })
@@ -960,7 +1124,14 @@ var Board = function (_React$Component) {
                             )
                         )
                     )
-                )
+                ),
+                _react2.default.createElement('div', { className: '' + (this.state.overlay ? 'overlay' : ''), onClick: function onClick() {
+                        return _this2.setState({
+                            overlay: false,
+                            menuList: null,
+                            menuCard: null
+                        });
+                    } })
             );
         }
     }]);
@@ -980,7 +1151,9 @@ function mapDispatchToProps(dispatch) {
         editList: _actions.editList,
         addCard: _actions.addCard,
         editCard: _actions.editCard,
-        moveCard: _actions.moveCard
+        moveCard: _actions.moveCard,
+        deleteCard: _actions.deleteCard,
+        toggleLabel: _actions.toggleLabel
     }, dispatch);
 }
 
@@ -1150,7 +1323,12 @@ exports.default = function () {
 
                 _currentList.cards.push({
                     message: action.payload.message,
-                    id: cardId // Every card must have a unique ID
+                    id: cardId, // Every card must have a unique ID,
+                    labels: {
+                        one: false,
+                        two: false,
+                        three: false
+                    }
                 });
 
                 return _extends({}, state, _defineProperty({}, _listId2, _currentList));
@@ -1196,6 +1374,34 @@ exports.default = function () {
                 }
 
                 return _extends({}, state, (_extends6 = {}, _defineProperty(_extends6, dragListId, dragList), _defineProperty(_extends6, hoverListId, hoverList), _extends6));
+            }
+
+        case ActionTypes.DELETE_CARD:
+            {
+                var _action$payload5 = action.payload,
+                    _listId4 = _action$payload5.listId,
+                    cardIndex = _action$payload5.cardIndex;
+
+                var _currentList3 = state[_listId4];
+
+                _currentList3.cards.splice(cardIndex, 1); // Simply remove the card from the array
+
+                return _extends({}, state, _defineProperty({}, _listId4, _currentList3));
+            }
+
+        case ActionTypes.TOGGLE_LABEL:
+            {
+                var _action$payload6 = action.payload,
+                    _listId5 = _action$payload6.listId,
+                    _cardId2 = _action$payload6.cardId,
+                    label = _action$payload6.label;
+
+                var _currentList4 = state[_listId5];
+
+                var _card = (0, _lodash.find)(_currentList4.cards, { 'id': _cardId2 });
+                _card.labels[label] = !_card.labels[label]; // Toggle the label
+
+                return _extends({}, state, _defineProperty({}, _listId5, _currentList4));
             }
 
         default:
