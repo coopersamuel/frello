@@ -6,7 +6,7 @@ const Header = (props) => {
         <div className='header'>
             <div className='container'>
                 <div className='row title-container justify-content-center align-items-center'>
-                    <div className='col-3'>
+                    <div className='col-sm-12 col-lg-3'>
                         <div className='title text-center'>frello</div>
                     </div>
                 </div>

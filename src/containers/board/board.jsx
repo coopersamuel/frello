@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addList, editList, addCard, editCard, moveCard, deleteCard, toggleLabel } from '../../actions/actions';
+import { addList, editList, addCard, editCard, moveCard, deleteCard, toggleLabel, initBoard, setLocalStorage } from '../../actions/actions';
 
 import List from '../../components/list/list';
 import { MdSentimentVerySatisfied } from 'react-icons/lib/md';
@@ -44,6 +44,14 @@ class Board extends React.Component {
         this.addTrailingCard = this.addTrailingCard.bind(this);
         this.onMenuClick = this.onMenuClick.bind(this);
         this.deleteCard = this.deleteCard.bind(this);
+    }
+
+    componentWillMount() {
+        this.props.initBoard();
+    }
+
+    componentDidMount() {
+        window.addEventListener('beforeunload', this.props.setLocalStorage());
     }
 
     submitList(name, id, list) {
@@ -121,7 +129,7 @@ class Board extends React.Component {
                                 {_.times(4, (index) => {
                                     /* Print out four of these */
                                     return (
-                                        <div key={`column_${index}`} className='col-3'>
+                                        <div key={`column_${index}`} className='col-sm-12 col-lg-3'>
                                             {_.map(getColumn(lists, index), (list) => {
                                                 return (
                                                     <List   key={list.id} list={list} 
@@ -144,7 +152,7 @@ class Board extends React.Component {
                     {_.isEmpty(this.props.lists) && 
                         <div className='instructions mt-5'>
                             <div className='text-center py-4'><MdSentimentVerySatisfied size={60} /></div>
-                            <div>Welcome to frello! Let's start with your first list</div>
+                            <div className="col-12 text-center">Welcome to frello! Let's start with your first list</div>
                             <div className='text-center pt-4'>
                                 <button className='btn btn-light create-button' onClick={() => this.addTrailingList()}>CREATE LIST</button>
                             </div>
@@ -175,7 +183,9 @@ function mapDispatchToProps(dispatch) {
         editCard,
         moveCard,
         deleteCard,
-        toggleLabel
+        toggleLabel,
+        initBoard,
+        setLocalStorage
     }, dispatch);
 }
 

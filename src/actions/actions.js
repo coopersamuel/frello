@@ -74,3 +74,15 @@ export const toggleLabel = (listId, cardId, label) => {
         }
     };
 }
+
+export const initBoard = () => {
+    return {
+        type: ActionTypes.INIT_FROM_LOCAL_STORAGE
+    }
+}
+
+export const setLocalStorage = () => {
+    return {
+        type: ActionTypes.SET_LOCAL_STORAGE
+    }
+}

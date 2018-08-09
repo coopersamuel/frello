@@ -110,6 +110,24 @@ export default (state = {}, action) => {
             };
         }
 
+        case ActionTypes.INIT_FROM_LOCAL_STORAGE: {
+            let lists = {}
+            // if (localStorage.length) {
+            //     lists = JSON.parse(localStorage.getItem("lists"));
+            // }
+
+            return lists;
+        }
+
+        case ActionTypes.SET_LOCAL_STORAGE: {
+            // localStorage.clear();
+
+            // const stateSerialized = JSON.stringify(state);
+            // localStorage.setItem("lists", stateSerialized);
+
+            return state;
+        }
+
         default:
             return state;
     }
