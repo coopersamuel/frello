@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addList, editList, addCard, editCard, moveCard, deleteCard, toggleLabel, initBoard, setLocalStorage } from '../../actions/actions';
+import { addList, editList, addCard, editCard, moveCard, deleteCard, toggleLabel } from '../../actions/actions';
 
 import List from '../../components/list/list';
 import { MdSentimentVerySatisfied } from 'react-icons/lib/md';
@@ -44,14 +44,6 @@ class Board extends React.Component {
         this.addTrailingCard = this.addTrailingCard.bind(this);
         this.onMenuClick = this.onMenuClick.bind(this);
         this.deleteCard = this.deleteCard.bind(this);
-    }
-
-    componentWillMount() {
-        this.props.initBoard();
-    }
-
-    componentDidMount() {
-        window.addEventListener('beforeunload', this.props.setLocalStorage());
     }
 
     submitList(name, id, list) {
@@ -183,9 +175,7 @@ function mapDispatchToProps(dispatch) {
         editCard,
         moveCard,
         deleteCard,
-        toggleLabel,
-        initBoard,
-        setLocalStorage
+        toggleLabel
     }, dispatch);
 }
 
