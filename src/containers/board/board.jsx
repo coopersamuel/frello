@@ -121,7 +121,7 @@ class Board extends React.Component {
                                 {_.times(4, (index) => {
                                     /* Print out four of these */
                                     return (
-                                        <div key={`column_${index}`} className='col-3'>
+                                        <div key={`column_${index}`} className='col-sm-12 col-lg-3'>
                                             {_.map(getColumn(lists, index), (list) => {
                                                 return (
                                                     <List   key={list.id} list={list} 
@@ -144,7 +144,7 @@ class Board extends React.Component {
                     {_.isEmpty(this.props.lists) && 
                         <div className='instructions mt-5'>
                             <div className='text-center py-4'><MdSentimentVerySatisfied size={60} /></div>
-                            <div>Welcome to frello! Let's start with your first list</div>
+                            <div className="col-12 text-center">Welcome to frello! Let's start with your first list</div>
                             <div className='text-center pt-4'>
                                 <button className='btn btn-light create-button' onClick={() => this.addTrailingList()}>CREATE LIST</button>
                             </div>
