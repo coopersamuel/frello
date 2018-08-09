@@ -627,7 +627,7 @@ var Header = function Header(props) {
                 { className: 'row title-container justify-content-center align-items-center' },
                 _react2.default.createElement(
                     'div',
-                    { className: 'col-3' },
+                    { className: 'col-sm-12 col-lg-3' },
                     _react2.default.createElement(
                         'div',
                         { className: 'title text-center' },
@@ -671,6 +671,8 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _dec, _class;
+//import HTML5Backend from 'react-dnd-html5-backend';
+
 
 var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
@@ -682,9 +684,13 @@ var _card2 = _interopRequireDefault(_card);
 
 var _reactDnd = __webpack_require__(/*! react-dnd */ "./node_modules/react-dnd/lib/index.js");
 
-var _reactDndHtml5Backend = __webpack_require__(/*! react-dnd-html5-backend */ "./node_modules/react-dnd-html5-backend/lib/index.js");
+var _reactDndMultiBackend = __webpack_require__(/*! react-dnd-multi-backend */ "./node_modules/react-dnd-multi-backend/lib/index.js");
 
-var _reactDndHtml5Backend2 = _interopRequireDefault(_reactDndHtml5Backend);
+var _reactDndMultiBackend2 = _interopRequireDefault(_reactDndMultiBackend);
+
+var _HTML5toTouch = __webpack_require__(/*! react-dnd-multi-backend/lib/HTML5toTouch */ "./node_modules/react-dnd-multi-backend/lib/HTML5toTouch.js");
+
+var _HTML5toTouch2 = _interopRequireDefault(_HTML5toTouch);
 
 var _lodash = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 
@@ -700,7 +706,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var List = (_dec = (0, _reactDnd.DragDropContext)(_reactDndHtml5Backend2.default), _dec(_class = function (_React$Component) {
+var List = (_dec = (0, _reactDnd.DragDropContext)((0, _reactDndMultiBackend2.default)(_HTML5toTouch2.default)), _dec(_class = function (_React$Component) {
     _inherits(List, _React$Component);
 
     function List(props) {
@@ -1075,7 +1081,7 @@ var Board = function (_React$Component) {
                                 /* Print out four of these */
                                 return _react2.default.createElement(
                                     'div',
-                                    { key: 'column_' + index, className: 'col-3' },
+                                    { key: 'column_' + index, className: 'col-sm-12 col-lg-3' },
                                     _lodash2.default.map(getColumn(lists, index), function (list) {
                                         return _react2.default.createElement(_list2.default, { key: list.id, list: list,
                                             editList: function editList(name, id) {
@@ -1109,7 +1115,7 @@ var Board = function (_React$Component) {
                         ),
                         _react2.default.createElement(
                             'div',
-                            null,
+                            { className: 'col-12 text-center' },
                             'Welcome to frello! Let\'s start with your first list'
                         ),
                         _react2.default.createElement(
